@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <h3 class="fw-bold mb-1">&#9877; Smart Pharmacy</h3>
+          <p class="text-secondary small mb-0">Inventory &amp; Medicine Waste Management System</p>
+        </div>
+
+        <!-- Role Selection Tabs -->
+        <ul class="nav nav-pills nav-fill mb-4 bg-light p-1 rounded-3" id="roleTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link py-2 fw-semibold {{ 'active shadow-sm' if active_role == 'admin' else '' }}"
+                    id="admin-tab"
+                    data-bs-toggle="pill"
+                    data-bs-target="#admin-pane"
+                    type="button"
+                    role="tab"
+                    aria-controls="admin-pane"
+                    aria-selected="{{ 'true' if active_role == 'admin' else 'false' }}">
+              &#128737; Admin Portal
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link py-2 fw-semibold {{ 'active shadow-sm' if active_role == 'pharmacist' else '' }}"
+                    id="pharmacist-tab"
+                    data-bs-toggle="pill"
+                    data-bs-target="#pharmacist-pane"
+                    type="button"
+                    role="tab"
+                    aria-controls="pharmacist-pane"
+                    aria-selected="{{ 'true' if active_role == 'pharmacist' else 'false' }}">
+              &#128138; Pharmacist Portal
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="roleTabsContent">
+          <!-- ADMIN LOGIN PANE -->
+          <div class="tab-pane fade {{ 'show active' if active_role == 'admin' else '' }}"
+               id="admin-pane"
+               role="tabpanel"
+               aria-labelledby="admin-tab"
+               tabindex="0">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h5 class="mb-0 fw-bold text-dark">Administrator Login</h5>
+                <small class="text-muted">Master catalogue, batches, reports &amp; users</small>
+              </div>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">Admin Only</span>
+            </div>
+
+            <form method="post" action="{{ url_for('login') }}" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="portal_role" value="admin">
+              <div class="mb-3">
+                <label class="form-label fw-medium" for="admin_email">Admin Email</label>
+                <input class="form-control"
+                       id="admin_email"
+                       name="email"
+                       type="email"
+                       placeholder="admin@pharmacy.com"
+                       required
+                       {{ 'autofocus' if active_role == 'admin' else '' }}>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-medium" for="admin_password">Password</label>
+                <input class="form-control"
+                       id="admin_password"
+                       name="password"
+                       type="password"
+                       placeholder="••••••••"
+                       required>
+              </div>
+              <button class="btn btn-primary w-100 py-2 fw-semibold mb-3" type="submit">
+                Log In as Administrator
+              </button>
+              <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded small text-secondary">
+                <span>Demo: <code>admin@pharmacy.com</code> / <code>Admin1234!</code></span>
+                <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2"
+                        onclick="fillCredentials('admin_email', 'admin@pharmacy.com', 'admin_password', 'Admin1234!')">
+                  Auto Fill
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- PHARMACIST LOGIN PANE -->
+          <div class="tab-pane fade {{ 'show active' if active_role == 'pharmacist' else '' }}"
+               id="pharmacist-pane"
+               role="tabpanel"
+               aria-labelledby="pharmacist-tab"
+               tabindex="0">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h5 class="mb-0 fw-bold text-dark">Pharmacist Login</h5>
+                <small class="text-muted">Dispensing, sales, purchases &amp; waste logs</small>
+              </div>
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Pharmacist Only</span>
+            </div>
+
+            <form method="post" action="{{ url_for('login') }}" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="portal_role" value="pharmacist">
+              <div class="mb-3">
+                <label class="form-label fw-medium" for="pharm_email">Pharmacist Email</label>
+                <input class="form-control"
+                       id="pharm_email"
+                       name="email"
+                       type="email"
+                       placeholder="pharmacist@pharmacy.com"
+                       required
+                       {{ 'autofocus' if active_role == 'pharmacist' else '' }}>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-medium" for="pharm_password">Password</label>
+                <input class="form-control"
+                       id="pharm_password"
+                       name="password"
+                       type="password"
+                       placeholder="••••••••"
+                       required>
+              </div>
+              <button class="btn btn-success w-100 py-2 fw-semibold mb-3" type="submit">
+                Log In as Pharmacist
+              </button>
+              <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded small text-secondary">
+                <span>Demo: <code>pharmacist@pharmacy.com</code> / <code>Pharmacist1234!</code></span>
+                <button type="button" class="btn btn-sm btn-outline-success py-0 px-2"
+                        onclick="fillCredentials('pharm_email', 'pharmacist@pharmacy.com', 'pharm_password', 'Pharmacist1234!')">
+                  Auto Fill
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function fillCredentials(emailId, emailVal, passId, passVal) {
+  const emailInput = document.getElementById(emailId);
+  const passInput = document.getElementById(passId);
+  if (emailInput && passInput) {
+    emailInput.value = emailVal;
+    passInput.value = passVal;
+  }
+}
+</script>
+{% endblock %}

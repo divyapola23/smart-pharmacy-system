@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h3 class="mb-3">Reports</h3>
+<form class="card card-body mb-4" method="get">
+  <div class="row g-3 align-items-end">
+    <div class="col-md-4"><label class="form-label">Report type</label>
+      <select class="form-select" name="type" required>
+        <option value="">Select a report</option>
+        {% for key, label in types.items() %}
+          <option value="{{ key }}" {{ 'selected' if args.get('type') == key }}>{{ label }}</option>
+        {% endfor %}
+      </select></div>
+    <div class="col-md-3"><label class="form-label">From (optional)</label>
+      <input class="form-control" type="date" name="start" value="{{ args.get('start', '') }}"></div>
+    <div class="col-md-3"><label class="form-label">To (optional)</label>
+      <input class="form-control" type="date" name="end" value="{{ args.get('end', '') }}"></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Generate</button></div>
+  </div>
+  <div class="form-text mt-2">Dates apply to purchase, sales, waste and summary reports.</div>
+</form>
+
+{% if report %}
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h5 class="mb-0">{{ report.title }}
+    {% if report.start or report.end %}<small class="text-secondary">({{ report.start or 'start' }} to {{ report.end or 'today' }})</small>{% endif %}</h5>
+  <a class="btn btn-outline-success btn-sm"
+     href="{{ url_for('reports_export', type=report.type, start=args.get('start', ''), end=args.get('end', '')) }}">Export CSV</a>
+</div>
+<div class="card mb-3"><div class="table-responsive">
+<table class="table table-hover mb-0 align-middle">
+  <thead><tr>{% for c in report.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for row in report.rows %}
+    <tr>{% for cell in row %}<td>{{ cell if cell is not none else '' }}</td>{% endfor %}</tr>
+  {% else %}
+    <tr><td colspan="{{ report.columns|length }}" class="text-center text-secondary py-4">No records found for this report.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+{% if report.totals %}
+<div class="row g-2">
+  {% for label, value in report.totals %}
+  <div class="col-sm-6 col-lg-3"><div class="card"><div class="card-body py-2">
+    <div class="small text-secondary">{{ label }}</div><div class="fw-semibold fs-5">{{ value }}</div>
+  </div></div></div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

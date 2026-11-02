@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Inventory</h3>
+  {% if current_user['role'] == ADMIN %}
+    <a class="btn btn-primary" href="{{ url_for('inventory_add') }}">+ Add batch</a>
+  {% endif %}
+</div>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-sm-8 col-md-5"><input class="form-control" name="q" value="{{ q }}" placeholder="Search medicine name, ID or batch number"></div>
+  <div class="col-auto"><button class="btn btn-outline-primary">Search</button>
+    {% if q %}<a class="btn btn-link" href="{{ url_for('inventory') }}">Clear</a>{% endif %}</div>
+</form>
+<div class="card"><div class="table-responsive">
+<table class="table table-hover mb-0 align-middle">
+  <thead><tr><th>ID</th><th>Medicine</th><th>Batch</th><th>Qty</th><th>Reorder</th>
+    <th>Purchase</th><th>Selling</th><th>Mfg</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for i in items %}
+    <tr><td>{{ i.inventory_id }}</td><td>{{ i.medicine_name }}</td><td>{{ i.batch_no }}</td>
+        <td>{{ i.quantity }}</td><td>{{ i.reorder_level }}</td>
+        <td>{{ '%.2f'|format(i.purchase_price) }}</td><td>{{ '%.2f'|format(i.selling_price) }}</td>
+        <td>{{ i.manufacture_date or '-' }}</td><td>{{ i.expiry_date }}</td>
+        <td>{{ status_badge(i.status) }}</td>
+        <td class="text-end">{% if current_user['role'] == ADMIN %}
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('inventory_edit', inventory_id=i.inventory_id) }}">Edit</a>{% endif %}</td></tr>
+  {% else %}
+    <tr><td colspan="11" class="text-center text-secondary py-4">No inventory batches found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+<p class="small text-secondary mt-2">Stock quantity changes only through purchases, sales and waste records.</p>
+{% endblock %}

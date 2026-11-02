@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Waste{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Waste management</h3>
+  {% if current_user['role'] == PHARMACIST %}
+    <a class="btn btn-primary" href="{{ url_for('waste_add') }}">+ Record waste</a>
+  {% endif %}
+</div>
+
+<div class="card mb-4">
+  <div class="card-header text-danger">Expired batches still in stock</div>
+  <div class="table-responsive"><table class="table mb-0 align-middle">
+    <thead><tr><th>Medicine</th><th>Batch</th><th>Qty in stock</th><th>Expired on</th></tr></thead>
+    <tbody>
+    {% for e in expired %}
+      <tr><td>{{ e.medicine_name }}</td><td>{{ e.batch_no }}</td><td>{{ e.quantity }}</td><td>{{ e.expiry_date }}</td></tr>
+    {% else %}
+      <tr><td colspan="4" class="text-center text-secondary py-3">No expired stock waiting for disposal.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+<div class="card">
+  <div class="card-header">Waste history</div>
+  <div class="table-responsive"><table class="table mb-0 align-middle">
+    <thead><tr><th>ID</th><th>Disposal date</th><th>Medicine</th><th>Batch</th><th>Qty</th><th>Reason</th><th>By</th></tr></thead>
+    <tbody>
+    {% for w in records %}
+      <tr><td>{{ w.waste_id }}</td><td>{{ w.disposal_date }}</td><td>{{ w.medicine_name }}</td>
+          <td>{{ w.batch_no }}</td><td>{{ w.quantity }}</td><td>{{ w.reason }}</td><td>{{ w.user_name }}</td></tr>
+    {% else %}
+      <tr><td colspan="7" class="text-center text-secondary py-3">No waste recorded yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endblock %}

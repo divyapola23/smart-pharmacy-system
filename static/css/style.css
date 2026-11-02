@@ -1,0 +1,16 @@
+body { background: #f4f7fa; font-family: "Segoe UI", system-ui, sans-serif; }
+.app-shell { min-height: 100vh; }
+.sidebar { width: 220px; min-width: 220px; background: #12343b; color: #fff; }
+.sidebar .brand { color: #fff; }
+.sidebar .nav-link { color: #cfe3e6; border-radius: 6px; }
+.sidebar .nav-link:hover, .sidebar .nav-link.active { background: #1f5560; color: #fff; }
+.user-box { border-top: 1px solid #2d5a63; padding-top: 1rem; }
+.stat-card { border-left-width: 4px; }
+.form-card { max-width: 760px; }
+.card { border: 0; box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
+.table th { white-space: nowrap; font-size: .85rem; color: #546e7a; }
+@media (max-width: 768px) {
+  .app-shell { flex-direction: column; }
+  .sidebar { width: 100%; }
+  .sidebar .nav { flex-direction: row !important; flex-wrap: wrap; }
+}

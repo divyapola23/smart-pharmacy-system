@@ -1,0 +1,8 @@
+{% macro status_badge(status) %}
+  {% set colors = {'Available': 'success', 'Low Stock': 'warning text-dark',
+                   'Near Expiry': 'info text-dark', 'Expired': 'danger',
+                   'Out of Stock': 'secondary'} %}
+  <span class="badge bg-{{ colors.get(status, 'secondary') }}">{{ status }}</span>
+{% endmacro %}
+
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{% endmacro %}

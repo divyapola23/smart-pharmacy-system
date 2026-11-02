@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Record Waste{% endblock %}
+{% block content %}
+<h3 class="mb-3">Record waste</h3>
+<div class="card form-card"><div class="card-body">
+<form method="post" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <div class="mb-3"><label class="form-label">Batch *</label>
+    <select class="form-select" name="inventory_id" required>
+      <option value="">Select a batch</option>
+      {% for b in batches %}
+        <option value="{{ b.inventory_id }}" {{ 'selected' if form.inventory_id == b.inventory_id|string }}>
+          {{ b.medicine_name }} / {{ b.batch_no }} (stock {{ b.quantity }}, exp {{ b.expiry_date }}, {{ b.status }})</option>
+      {% endfor %}
+    </select></div>
+  <div class="row">
+    <div class="col-md-4 mb-3"><label class="form-label">Quantity wasted *</label>
+      <input class="form-control" type="number" min="1" step="1" name="quantity" required value="{{ form.quantity or '' }}"></div>
+    <div class="col-md-4 mb-3"><label class="form-label">Reason *</label>
+      <select class="form-select" name="reason" required>
+        {% for r in reasons %}<option {{ 'selected' if form.reason == r }}>{{ r }}</option>{% endfor %}
+      </select></div>
+    <div class="col-md-4 mb-3"><label class="form-label">Disposal date *</label>
+      <input class="form-control" type="date" name="disposal_date" max="{{ today }}" value="{{ form.disposal_date or today }}" required></div>
+  </div>
+  <button class="btn btn-danger" data-confirm="Record this waste? Stock will be reduced and this cannot be undone.">Record waste</button>
+  <a class="btn btn-link" href="{{ url_for('waste_list') }}">Cancel</a>
+</form></div></div>
+{% endblock %}

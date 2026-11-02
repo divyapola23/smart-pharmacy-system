@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} Batch{% endblock %}
+{% block content %}
+<h3 class="mb-3">{{ 'Edit batch' if editing else 'Add batch (opening stock)' }}</h3>
+<div class="card form-card"><div class="card-body">
+<form method="post" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {% if editing %}
+    <p><strong>{{ batch.medicine_name }}</strong> &middot; current quantity: {{ batch.quantity }}
+       <span class="text-secondary small">(change stock via purchase, sale or waste)</span></p>
+  {% else %}
+  <div class="mb-3"><label class="form-label">Medicine *</label>
+    <select class="form-select" name="medicine_id" required>
+      <option value="">Select a medicine</option>
+      {% for m in medicines %}
+        <option value="{{ m.medicine_id }}" {{ 'selected' if batch.medicine_id == m.medicine_id|string }}>{{ m.medicine_name }} ({{ m.manufacturer or 'n/a' }})</option>
+      {% endfor %}
+    </select></div>
+  {% endif %}
+  <div class="row">
+    <div class="col-md-6 mb-3"><label class="form-label">Batch number *</label>
+      <input class="form-control" name="batch_no" required maxlength="50" value="{{ batch.batch_no or '' }}"></div>
+    {% if not editing %}
+    <div class="col-md-6 mb-3"><label class="form-label">Opening quantity *</label>
+      <input class="form-control" type="number" min="0" step="1" name="quantity" required value="{{ batch.quantity or '' }}"></div>
+    {% endif %}
+    <div class="col-md-6 mb-3"><label class="form-label">Purchase price per unit *</label>
+      <input class="form-control" type="number" min="0" step="0.01" name="purchase_price" required value="{{ batch.purchase_price or '' }}"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">Selling price per unit *</label>
+      <input class="form-control" type="number" min="0" step="0.01" name="selling_price" required value="{{ batch.selling_price or '' }}"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">Manufacture date</label>
+      <input class="form-control" type="date" name="manufacture_date" value="{{ batch.manufacture_date or '' }}"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">Expiry date *</label>
+      <input class="form-control" type="date" name="expiry_date" required value="{{ batch.expiry_date or '' }}"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">Reorder level *</label>
+      <input class="form-control" type="number" min="0" step="1" name="reorder_level" required value="{{ batch.reorder_level if batch.reorder_level is not none else 10 }}"></div>
+  </div>
+  <button class="btn btn-primary">Save</button>
+  <a class="btn btn-link" href="{{ url_for('inventory') }}">Cancel</a>
+</form></div></div>
+{% endblock %}

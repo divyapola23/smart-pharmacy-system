@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <h3 class="mb-0">Transactions</h3>
+  {% if current_user['role'] == PHARMACIST %}
+  <div>
+    <a class="btn btn-primary" href="{{ url_for('purchase') }}">+ Record purchase</a>
+    <a class="btn btn-success" href="{{ url_for('sale') }}">+ Record sale</a>
+  </div>
+  {% endif %}
+</div>
+<div class="btn-group mb-3">
+  <a class="btn btn-outline-secondary {{ 'active' if not kind }}" href="{{ url_for('transactions') }}">All</a>
+  <a class="btn btn-outline-secondary {{ 'active' if kind == 'Purchase' }}" href="{{ url_for('transactions', type='Purchase') }}">Purchases</a>
+  <a class="btn btn-outline-secondary {{ 'active' if kind == 'Sale' }}" href="{{ url_for('transactions', type='Sale') }}">Sales</a>
+</div>
+<div class="card"><div class="table-responsive">
+<table class="table table-hover mb-0 align-middle">
+  <thead><tr><th>ID</th><th>Type</th><th>Date</th><th>Medicine</th><th>Batch</th><th>Qty</th>
+    <th>Unit price</th><th>Total</th><th>By</th></tr></thead>
+  <tbody>
+  {% for t in rows %}
+    <tr><td>{{ t.transaction_id }}</td>
+        <td><span class="badge bg-{{ 'primary' if t.transaction_type == 'Purchase' else 'success' }}">{{ t.transaction_type }}</span></td>
+        <td>{{ t.transaction_date }}</td><td>{{ t.medicine_name }}</td><td>{{ t.batch_no }}</td>
+        <td>{{ t.quantity }}</td><td>{{ '%.2f'|format(t.unit_price) }}</td>
+        <td>{{ '%.2f'|format(t.total_amount) }}</td><td>{{ t.user_name }}</td></tr>
+  {% else %}
+    <tr><td colspan="9" class="text-center text-secondary py-4">No transactions recorded.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+{% endblock %}

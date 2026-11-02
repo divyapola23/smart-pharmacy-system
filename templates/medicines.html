@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Medicines{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Medicines</h3>
+  <a class="btn btn-primary" href="{{ url_for('medicine_add') }}">+ Add medicine</a>
+</div>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-sm-8 col-md-5"><input class="form-control" name="q" value="{{ q }}" placeholder="Search by name or ID"></div>
+  <div class="col-auto"><button class="btn btn-outline-primary">Search</button>
+    {% if q %}<a class="btn btn-link" href="{{ url_for('medicines') }}">Clear</a>{% endif %}</div>
+</form>
+<div class="card"><div class="table-responsive">
+<table class="table table-hover mb-0 align-middle">
+  <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Manufacturer</th><th></th></tr></thead>
+  <tbody>
+  {% for m in medicines %}
+    <tr><td>{{ m.medicine_id }}</td><td>{{ m.medicine_name }}</td><td>{{ m.category or '-' }}</td>
+        <td>{{ m.manufacturer or '-' }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('medicine_detail', medicine_id=m.medicine_id) }}">View</a>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('medicine_edit', medicine_id=m.medicine_id) }}">Edit</a>
+        </td></tr>
+  {% else %}
+    <tr><td colspan="5" class="text-center text-secondary py-4">No medicines found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+{% endblock %}

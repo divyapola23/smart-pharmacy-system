@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-4">Dashboard</h3>
+<div class="row g-3 mb-4">
+  {% for label, value, cls in [
+      ('Medicines', stats.medicines, 'primary'), ('Batches', stats.batches, 'primary'),
+      ('Units in stock', stats.units_in_stock, 'primary'), ('Low-stock batches', stats.low_stock, 'warning'),
+      ('Near expiry', stats.near_expiry, 'info'), ('Expired batches', stats.expired, 'danger')] %}
+  <div class="col-6 col-lg-2">
+    <div class="card stat-card border-{{ cls }}"><div class="card-body">
+      <div class="text-secondary small">{{ label }}</div>
+      <div class="fs-3 fw-semibold">{{ value }}</div>
+    </div></div>
+  </div>
+  {% endfor %}
+</div>
+<div class="card">
+  <div class="card-header">Stock and expiry alerts</div>
+  <div class="table-responsive">
+    <table class="table mb-0 align-middle">
+      <thead><tr><th>Medicine</th><th>Batch</th><th>Qty</th><th>Expiry</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for a in alerts %}
+        <tr><td>{{ a.medicine_name }}</td><td>{{ a.batch_no }}</td><td>{{ a.quantity }}</td>
+            <td>{{ a.expiry_date }}</td><td>{{ status_badge(a.status) }}</td></tr>
+      {% else %}
+        <tr><td colspan="5" class="text-center text-secondary py-4">No alerts. All stock looks healthy.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% if current_user and current_user['role'] == ADMIN %}
+<div class="card mt-4 border-0 shadow-sm">
+  <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-primary text-white px-2 py-1">&#128737; Admin Feature</span>
+      <h5 class="mb-0 fw-bold">Sales Count per Medicine</h5>
+    </div>
+    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('reports') }}?type=sales_per_medicine">
+      View in Reports &amp; Export CSV &rarr;
+    </a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Medicine</th>
+          <th>Category</th>
+          <th>Manufacturer</th>
+          <th class="text-center">Sales Transactions</th>
+          <th class="text-center">Total Units Sold</th>
+          <th class="text-end">Total Revenue</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for sm in sales_by_medicine %}
+        <tr>
+          <td class="fw-semibold">
+            <a href="{{ url_for('medicine_detail', medicine_id=sm.medicine_id) }}" class="text-decoration-none">
+              {{ sm.medicine_name }}
+            </a>
+          </td>
+          <td><span class="badge bg-light text-dark border">{{ sm.category or '-' }}</span></td>
+          <td class="text-muted small">{{ sm.manufacturer or '-' }}</td>
+          <td class="text-center">
+            {% if sm.sales_count > 0 %}
+              <span class="badge bg-primary rounded-pill px-3 py-1 fs-6">{{ sm.sales_count }}</span>
+            {% else %}
+              <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">0</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if sm.total_units_sold > 0 %}
+              <span class="fw-bold text-success">{{ sm.total_units_sold }} units</span>
+            {% else %}
+              <span class="text-muted">0 units</span>
+            {% endif %}
+          </td>
+          <td class="text-end fw-bold">
+            ${{ '%.2f'|format(sm.total_revenue) }}
+          </td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('medicine_detail', medicine_id=sm.medicine_id) }}">View</a>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="text-center text-secondary py-4">No medicines registered yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

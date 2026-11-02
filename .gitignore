@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+pharmacy.db
+*.db
+backups/
+cloudflared.exe
